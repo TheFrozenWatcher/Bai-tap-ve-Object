@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Slider with Thumbnails</title>
+  <style>
+    #image-container {
+      width: 100%;
+      max-width: 500px; 
+      margin: auto;
+      overflow: hidden;
+    }
+
+    #image-container img {
+      width: 100%;
+      display: none;
+    }
+
+    #thumbnails-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .thumbnail {
+      width: 50px; 
+      margin: 0 5px;
+      cursor: pointer;
+    }
+
+    .thumbnail img {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div id="image-container"></div>
+<div id="thumbnails-container"></div>
+<button id="prevBtn">Previous</button>
+<button id="nextBtn">Next</button>
+
+<script>
+  const images = [
+    "https://media.dolenglish.vn/PUBLIC/MEDIA/3048a904-08f7-41a7-9c8b-5d7904ac68d7.png",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTp0o3jYuzLm9eFLA5XFsBVSIOKxSlttlfbw&usqp=CAU",
+    "https://pngimg.com/d/number3_PNG14965.png",
+    "https://pngimg.com/d/number4_PNG15015.png",
+  ];
+
+  let currentIndex = 0;
+  let intervalId;
+
+  const imageContainer = document.getElementById("image-container");
+  const thumbnailsContainer = document.getElementById("thumbnails-container");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+
+  function showImage(index) {
+    const imgElements = document.querySelectorAll("#image-container img");
+    imgElements.forEach((img, i) => {
+      img.style.display = i === index ? "block" : "none";
+    });
+  }
+
+  function nextImage() {
+    currentIndex = (currentIndex + 1) % images.length;
+    showImage(currentIndex);
+  }
+
+  function prevImage() {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    showImage(currentIndex);
+  }
+
+  function startAutoSlide() {
+    intervalId = setInterval(nextImage, 5000);
+  }
+
+  function stopAutoSlide() {
+    clearInterval(intervalId);
+  }
+
+  function createThumbnail(imageUrl, index) {
+    const thumbnailContainer = document.createElement("div");
+    thumbnailContainer.classList.add("thumbnail");
+    const thumbnailImg = document.createElement("img");
+    thumbnailImg.src = imageUrl;
+    thumbnailImg.addEventListener("click", () => {
+      stopAutoSlide();
+      currentIndex = index;
+      showImage(currentIndex);
+    });
+    thumbnailContainer.appendChild(thumbnailImg);
+    return thumbnailContainer;
+  }
+
+  images.forEach((imageUrl, index) => {
+    const imgElement = document.createElement("img");
+    imgElement.src = imageUrl;
+    imageContainer.appendChild(imgElement);
+
+    const thumbnail = createThumbnail(imageUrl, index);
+    thumbnailsContainer.appendChild(thumbnail);
+  });
+
+  showImage(currentIndex);
+
+  imageContainer.addEventListener("click", () => {
+    nextImage();
+  });
+
+  nextBtn.addEventListener("click", () => {
+    stopAutoSlide();
+    nextImage();
+  });
+
+  prevBtn.addEventListener("click", () => {
+    stopAutoSlide();
+    prevImage();
+  });
+
+  startAutoSlide();
+</script>
+
+</body>
+</html>
